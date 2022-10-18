@@ -48,9 +48,6 @@ Please fork this projct to your GitLab account.  Then clone to your local machin
 Person.cpp <br>
 Soupline.cpp**
 
-## Due Date
-Project is due 4/2/22.  
-
 ## Teams
 
 Individual effort for this project.
