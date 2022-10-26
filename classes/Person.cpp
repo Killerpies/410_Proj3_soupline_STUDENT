@@ -11,6 +11,26 @@
 #include <chrono> // this_thread::sleep_for(chrono::milliseconds(MILLI_SECONDS_TO_WAIT));
 
 //TODO your includes here 
-
+#include "../includes/Person.h"
 
 //TODO your implementation here
+
+	Person::Person(int personID):personID(personID), numbBowlsSoupEaten(0), numbDrinksDrunk(0){};
+	/***
+	 * gets soup and drinks until SoupLine runs out of both then exits
+	 *
+	 * runs a loop repeatedly asking for soup and drinks from msl, the soupline global
+	 * calls msl.getSoup(personID)
+	 * If call returns NOT_YOUR_TURN then gives other threads a chance by waiting MILLI_SECONDS_TO_WAIT
+	 * If call returns BOWL_OF_SOUP then increment numbBowlsSoupEaten
+	 * If call returns OUT_OF_SOUP then stop asking for soup
+	 *
+	 * calls msl.getDrink(personID)
+	 * If call returns NOT_YOUR_TURN then gives other threads a chance by waiting MILLI_SECONDS_TO_WAIT
+	 * If call returns DRINK then increment numbDrinksDrunk
+	 * If call returns OUT_OF_DRINKS then stop asking for drinks
+	 *
+	 * If soupline is out of both soup and drinks this function exits
+	 * @return void
+	 */
+	void Person::eatlunch(){};
