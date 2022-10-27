@@ -7,7 +7,11 @@
 #include <algorithm>
 #include <mutex>
 //TODO your includes here 
+#include <algorithm>
+#include <iostream>
 #include "../includes/Soupline.h"
+#include "../includes/externs.h"
+using namespace std;
 //TODO your implementation here
 
 
@@ -23,7 +27,14 @@
 	 * @param numbBowlsSoup
 	 * @param numbDrinks
 	 */
-	void Soupline::restock(int numbBowlsSoup, int numbDrinks){}
+	void Soupline::restock(int numbBowlsSoup, int numbDrinks){
+		soup_mutex.lock();
+		drink_mutex.lock();
+		numbBowlsSoupLeft = numbBowlsSoup;
+		numbDrinksLeft = numbDrinks;
+		soup_mutex.unlock();
+		drink_mutex.unlock();
+	}
 
 	/***
 	 * If no soup left returns OUT_OF_SOUP
@@ -36,7 +47,37 @@
 	 *         OUT_OF_SOUP if numbBowlsSoupLeft==0 return this
 	 */
 	int Soupline::getSoup(int personID){
-		return 1;
+		soup_mutex.lock();
+		if (numbBowlsSoupLeft == 0) {
+			soup_mutex.unlock();
+			return OUT_OF_SOUP;
+		}
+		int minVal = getFewestBowlsOfSoupServedToACustomer();
+		for (unsigned int i = 0; i< my_customers.size(); i++){
+			if (my_customers[i].personID == personID){
+				if (my_customers[i].numbBowlsSoup > minVal ){
+					soup_mutex.unlock();
+					return NOT_YOUR_TURN;
+
+				}
+				else{
+					numbBowlsSoupLeft -=1;
+					my_customers[i].numbBowlsSoup +=1;
+					soup_mutex.unlock();
+					return BOWL_OF_SOUP;
+
+				}
+			}
+		}
+
+		customer temp = {};
+		temp.personID = personID;
+		temp.numbBowlsSoup ++;
+		temp.numbDrinks = 0;
+		numbBowlsSoupLeft -=1;
+		my_customers.push_back(temp);
+		soup_mutex.unlock();
+		return BOWL_OF_SOUP;
 	}
 
 	/***
@@ -45,7 +86,17 @@
 	 * @return ZERO or int
 	 */
 	int Soupline::getFewestBowlsOfSoupServedToACustomer(){
-		return 1;
+		int minVal = 1000;
+		if (my_customers.empty()){
+			return ZERO;
+		}
+		for (unsigned int i = 0; i<  my_customers.size();i++) {
+			if (my_customers[i].numbBowlsSoup < minVal){
+				minVal = my_customers[i].numbBowlsSoup;
+			}
+		}
+		return minVal;
+
 	}
 
 	/***
@@ -59,8 +110,37 @@
 	 *         OUT_OF_DRINKS if numbDrinksLeft==0 return this
 	 */
 	int Soupline::getDrink(int personID){
-		return 1;
-	}
+		drink_mutex.lock();
+		if (numbDrinksLeft <= 0) {
+			drink_mutex.unlock();
+			return OUT_OF_DRINKS;
+		}
+		int minVal = getFewestDrinksServedToACustomer();
+		for (unsigned int i = 0; i < my_customers.size(); i++){
+			if (my_customers[i].personID == personID){
+				if (my_customers[i].numbDrinks > minVal){
+					drink_mutex.unlock();
+					return NOT_YOUR_TURN;
+
+				}
+				else{
+					numbDrinksLeft -=1;
+					my_customers[i].numbDrinks +=1;
+					drink_mutex.unlock();
+					return DRINK;
+				}
+			}
+		}
+
+		customer temp = {};
+		temp.personID = personID;
+		temp.numbBowlsSoup = 0;
+		temp.numbDrinks += 1;
+		numbDrinksLeft -=1;
+		my_customers.push_back(temp);
+		drink_mutex.unlock();
+		return DRINK;
+}
 
 	/***
 	 * Find customer who has had the fewest drinks and return numbDrinks they have had
@@ -68,5 +148,14 @@
 	 * @return ZERO or int
 	 */
 	int Soupline::getFewestDrinksServedToACustomer(){
-		return 1;
+		int minVal = 1000;
+		if (my_customers.empty()){
+					return ZERO;
+				}
+		for (unsigned int i = 0; i<  my_customers.size();i++) {
+			if (my_customers[i].numbDrinks < minVal){
+				minVal = my_customers[i].numbDrinks;
+			}
+		}
+		return minVal;
 	}

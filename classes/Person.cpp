@@ -12,6 +12,8 @@
 
 //TODO your includes here 
 #include "../includes/Person.h"
+#include "../includes/externs.h"
+using namespace std;
 
 //TODO your implementation here
 
@@ -33,4 +35,37 @@
 	 * If soupline is out of both soup and drinks this function exits
 	 * @return void
 	 */
-	void Person::eatlunch(){};
+	void Person::eatlunch(){
+		bool hasSoup = true;
+		bool hasDrink = true;
+		while (hasSoup == true || hasDrink == true) {
+			int soupResponse;
+			int drinkResponse;
+
+			if (hasSoup){
+				soupResponse = msl.getSoup(personID);
+			}
+			if (hasDrink) {
+				drinkResponse = msl.getDrink(personID);
+			}
+			if (soupResponse == NOT_YOUR_TURN || drinkResponse == NOT_YOUR_TURN) {
+				this_thread::sleep_for(chrono::milliseconds(MILLI_SECONDS_TO_WAIT));
+			}
+			if (soupResponse == OUT_OF_SOUP) {
+				hasSoup = false;
+			}
+			if (drinkResponse == OUT_OF_DRINKS) {
+				hasDrink = false;
+			}
+			if (soupResponse == BOWL_OF_SOUP) {
+				numbBowlsSoupEaten++;
+			}
+			if (soupResponse == DRINK) {
+				numbDrinksDrunk++;
+			}
+
+			this_thread::sleep_for(chrono::milliseconds(MILLI_SECONDS_TO_WAIT));
+
+		}
+
+	};
