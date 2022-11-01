@@ -47,23 +47,20 @@ using namespace std;
 	 *         OUT_OF_SOUP if numbBowlsSoupLeft==0 return this
 	 */
 	int Soupline::getSoup(int personID){
-		soup_mutex.lock();
+		lock_guard<mutex> lock (soup_mutex);
 		if (numbBowlsSoupLeft == 0) {
-			soup_mutex.unlock();
 			return OUT_OF_SOUP;
 		}
 		int minVal = getFewestBowlsOfSoupServedToACustomer();
 		for (unsigned int i = 0; i< my_customers.size(); i++){
 			if (my_customers[i].personID == personID){
 				if (my_customers[i].numbBowlsSoup > minVal ){
-					soup_mutex.unlock();
 					return NOT_YOUR_TURN;
 
 				}
-				else{
+				if (my_customers[i].numbBowlsSoup <= minVal){
 					numbBowlsSoupLeft -=1;
 					my_customers[i].numbBowlsSoup +=1;
-					soup_mutex.unlock();
 					return BOWL_OF_SOUP;
 
 				}
@@ -76,7 +73,6 @@ using namespace std;
 		temp.numbDrinks = 0;
 		numbBowlsSoupLeft -=1;
 		my_customers.push_back(temp);
-		soup_mutex.unlock();
 		return BOWL_OF_SOUP;
 	}
 
@@ -86,8 +82,9 @@ using namespace std;
 	 * @return ZERO or int
 	 */
 	int Soupline::getFewestBowlsOfSoupServedToACustomer(){
-		int minVal = 1000;
-		if (my_customers.empty()){
+//		lock_guard<mutex> lock (soup_mutex);
+		int minVal = 10000;
+		if (my_customers.size()==0){
 			return ZERO;
 		}
 		for (unsigned int i = 0; i<  my_customers.size();i++) {
@@ -110,23 +107,20 @@ using namespace std;
 	 *         OUT_OF_DRINKS if numbDrinksLeft==0 return this
 	 */
 	int Soupline::getDrink(int personID){
-		drink_mutex.lock();
+		lock_guard<mutex> lock (drink_mutex);
 		if (numbDrinksLeft <= 0) {
-			drink_mutex.unlock();
 			return OUT_OF_DRINKS;
 		}
 		int minVal = getFewestDrinksServedToACustomer();
 		for (unsigned int i = 0; i < my_customers.size(); i++){
 			if (my_customers[i].personID == personID){
 				if (my_customers[i].numbDrinks > minVal){
-					drink_mutex.unlock();
 					return NOT_YOUR_TURN;
 
 				}
-				else{
+				if (my_customers[i].numbDrinks <= minVal){
 					numbDrinksLeft -=1;
 					my_customers[i].numbDrinks +=1;
-					drink_mutex.unlock();
 					return DRINK;
 				}
 			}
@@ -138,7 +132,6 @@ using namespace std;
 		temp.numbDrinks += 1;
 		numbDrinksLeft -=1;
 		my_customers.push_back(temp);
-		drink_mutex.unlock();
 		return DRINK;
 }
 
@@ -148,10 +141,10 @@ using namespace std;
 	 * @return ZERO or int
 	 */
 	int Soupline::getFewestDrinksServedToACustomer(){
-		int minVal = 1000;
-		if (my_customers.empty()){
-					return ZERO;
-				}
+		int minVal = 10000;
+		if (my_customers.size()==0){
+			return ZERO;
+		}
 		for (unsigned int i = 0; i<  my_customers.size();i++) {
 			if (my_customers[i].numbDrinks < minVal){
 				minVal = my_customers[i].numbDrinks;

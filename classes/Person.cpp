@@ -39,11 +39,9 @@ using namespace std;
 		bool hasSoup = true;
 		bool hasDrink = true;
 		while (hasSoup == true || hasDrink == true) {
-			int soupResponse;
-			int drinkResponse;
 
 			if (hasSoup){
-				soupResponse = msl.getSoup(personID);
+				int soupResponse = msl.getSoup(personID);
 				if (soupResponse == NOT_YOUR_TURN) {
 					this_thread::sleep_for(chrono::milliseconds(MILLI_SECONDS_TO_WAIT));
 				}
@@ -56,7 +54,7 @@ using namespace std;
 
 			}
 			if (hasDrink) {
-				drinkResponse = msl.getDrink(personID);
+				int drinkResponse = msl.getDrink(personID);
 				if ( drinkResponse == NOT_YOUR_TURN) {
 					this_thread::sleep_for(chrono::milliseconds(MILLI_SECONDS_TO_WAIT));
 				}
