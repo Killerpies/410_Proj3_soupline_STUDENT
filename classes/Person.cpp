@@ -44,26 +44,32 @@ using namespace std;
 
 			if (hasSoup){
 				soupResponse = msl.getSoup(personID);
+				if (soupResponse == NOT_YOUR_TURN) {
+					this_thread::sleep_for(chrono::milliseconds(MILLI_SECONDS_TO_WAIT));
+				}
+				if (soupResponse == BOWL_OF_SOUP) {
+					numbBowlsSoupEaten++;
+				}
+				if (soupResponse == OUT_OF_SOUP) {
+					hasSoup = false;
+				}
+
 			}
 			if (hasDrink) {
 				drinkResponse = msl.getDrink(personID);
-			}
-			if (soupResponse == NOT_YOUR_TURN || drinkResponse == NOT_YOUR_TURN) {
-				this_thread::sleep_for(chrono::milliseconds(MILLI_SECONDS_TO_WAIT));
-			}
-			if (soupResponse == OUT_OF_SOUP) {
-				hasSoup = false;
-			}
-			if (drinkResponse == OUT_OF_DRINKS) {
-				hasDrink = false;
-			}
-			if (soupResponse == BOWL_OF_SOUP) {
-				numbBowlsSoupEaten++;
-			}
-			if (soupResponse == DRINK) {
-				numbDrinksDrunk++;
-			}
+				if ( drinkResponse == NOT_YOUR_TURN) {
+					this_thread::sleep_for(chrono::milliseconds(MILLI_SECONDS_TO_WAIT));
+				}
 
+
+				if (drinkResponse == DRINK) {
+					numbDrinksDrunk++;
+				}
+				if (drinkResponse == OUT_OF_DRINKS) {
+					hasDrink = false;
+				}
+
+			}
 			this_thread::sleep_for(chrono::milliseconds(MILLI_SECONDS_TO_WAIT));
 
 		}
