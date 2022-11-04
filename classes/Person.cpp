@@ -68,7 +68,7 @@ using namespace std;
 				}
 
 			}
-			this_thread::sleep_for(chrono::milliseconds(MILLI_SECONDS_TO_WAIT));
+//			this_thread::sleep_for(chrono::milliseconds(MILLI_SECONDS_TO_WAIT));
 
 		}
 

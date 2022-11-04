@@ -28,12 +28,8 @@ using namespace std;
 	 * @param numbDrinks
 	 */
 	void Soupline::restock(int numbBowlsSoup, int numbDrinks){
-		soup_mutex.lock();
-		drink_mutex.lock();
 		numbBowlsSoupLeft = numbBowlsSoup;
 		numbDrinksLeft = numbDrinks;
-		soup_mutex.unlock();
-		drink_mutex.unlock();
 	}
 
 	/***
@@ -111,7 +107,11 @@ using namespace std;
 		if (numbDrinksLeft <= 0) {
 			return OUT_OF_DRINKS;
 		}
+
 		int minVal = getFewestDrinksServedToACustomer();
+		if (my_customers.size() == 1){
+			return NOT_YOUR_TURN;
+		}
 		for (unsigned int i = 0; i < my_customers.size(); i++){
 			if (my_customers[i].personID == personID){
 				if (my_customers[i].numbDrinks > minVal){
